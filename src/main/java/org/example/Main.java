@@ -1,33 +1,68 @@
 package org.example;
-import java.io.IOException;
-import java.nio.file.Files;
 
+import java.io.*;
+
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Main {
-    public static void main(String[] args) {
-        Date start = new Date();
-        ArrayList<Airport> airports = new ArrayList<>();
-        try {
-            ListIterator<String> list =
-                    Files.readAllLines(
-                            Paths.get("src\\main\\resources\\airports.csv")
-                    ).listIterator();
+    static ArrayList<Airport> airports = new ArrayList<>();
+    static String path = "src/main/resources/airports.csv";
+    static SortedSet<Airport> sortedSet = new TreeSet<>((n1, n2) -> n1.getNumberInFile() - n2.getNumberInFile());
+
+    public static void main(String[] args) throws IOException {
+        try (FileInputStream inputStream = new FileInputStream(path);
+             Scanner sc = new Scanner(inputStream)) {
             int index = 0;
-            while (list.hasNext()){
-                airports.add(new Airport(index, list.next().replaceAll("\"", "").split(",")[1]));
+            while (sc.hasNextLine()) {
+                sortedSet.add(new Airport(index, sc.nextLine().split(",")[1].replaceAll("\"", "")));
                 index++;
             }
-            System.out.println(new Date().getTime() - start.getTime());
-        }catch (IOException exception){
-            System.out.println(exception.toString());
+        } catch (IOException e) {
+            System.out.println(e.toString());
         }
-
         Scanner scanner = new Scanner(System.in);
-        while (!scanner.hasNext("!quit")){
-            System.out.println(scanner.next());
+        while (!scanner.hasNext("!quit")) {
+            String name = scanner.next();
+            Date start = new Date();
+            ArrayList<String> list = findByName(findByName(name));
+            for (String line :
+                    list) {
+                System.out.println(line);
+            }
+            System.out.println(new Date().getTime() - start.getTime() + " " + list.size());
         }
+    }
+
+    private static ArrayList<Integer> findByName(String s) {
+        ArrayList<Integer> integers = new ArrayList<>();
+        for (Airport air : sortedSet) {
+            if (air.getName().startsWith(s)) {
+                integers.add(air.getNumberInFile());
+            }
+        }
+        return integers;
+    }
+
+    private static ArrayList<String> findByName(ArrayList<Integer> integers) {
+        ArrayList<String> list = new ArrayList<>();
+        int prev = 0;
+        try {
+            BufferedReader lines = Files.newBufferedReader(Path.of(path));
+            for (Integer index : integers) {
+                String line = "";
+                for (; prev <= index; prev++) {
+                    line = lines.readLine();
+                }
+                list.add(line);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return list;
     }
 }
