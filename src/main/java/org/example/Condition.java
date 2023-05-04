@@ -56,4 +56,13 @@ public class Condition implements Predicate<String> {
             return null;
         }
     }
+
+    @Override
+    public String toString() {
+        return "Condition{" +
+                "columnNumber=" + columnNumber +
+                ", operation='" + operation + '\'' +
+                ", value='" + value + '\'' +
+                '}';
+    }
 }
