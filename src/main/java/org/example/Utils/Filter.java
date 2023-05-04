@@ -1,17 +1,14 @@
-import org.example.Entity.Condition;
+package org.example.Utils;
+
 import org.example.DoublyLinkedList.DoublyList;
 import org.example.DoublyLinkedList.Node;
-import org.junit.Test;
+import org.example.Entity.Condition;
 
 import java.util.function.Predicate;
 
-public class FilterTest {
-    private final String filterTest =
-            "(column[1]>10&column[5]='GKA'||column[2]>123)||(column[1]<10000&column[11]=0||(column[2]>100||column[7]<>100))";
-
-    @Test
-    public void zxc() {
-        String[] conditions = filterTest.split("[&|\\||(|)]");
+public class Filter {
+    public void filter(String filter) {
+        String[] conditions = filter.split("[&|\\||(|)]");
         String[] preparedConditions = new String[20];
         int counter = 0;
         for (String c : conditions) {
@@ -19,7 +16,7 @@ public class FilterTest {
                 preparedConditions[counter++] = c;
             }
         }
-        String ex = filterTest;
+        String ex = filter;
         for (String c : preparedConditions) {
             if (c != null) {
                 ex = ex.replace(c, "p");
@@ -30,9 +27,6 @@ public class FilterTest {
         int deep = 0;
         boolean isAnd = false;
         int currCond = 0;
-        Node head = null;
-        Node curr = null;
-        Node prev = null;
         boolean canOperate = false;
         for (int j = 0; j < c.length; j++) {
             switch (c[j]) {
@@ -96,6 +90,4 @@ public class FilterTest {
         }
 
     }
-
-
 }

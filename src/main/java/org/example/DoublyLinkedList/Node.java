@@ -1,6 +1,7 @@
-package org.example;
+package org.example.DoublyLinkedList;
 
 import lombok.Data;
+import org.example.Entity.Condition;
 
 @Data
 public class Node {

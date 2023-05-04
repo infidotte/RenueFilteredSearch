@@ -1,11 +1,11 @@
-package org.example;
+package org.example.Entity;
 
 import java.util.function.Predicate;
 
 public class Condition implements Predicate<String> {
-    private int columnNumber;
-    private String operation;
-    private String value;
+    private final int columnNumber;
+    private final String operation;
+    private final String value;
 
     public Condition(int columnNumber, String operation, String value) {
         this.columnNumber = columnNumber;
@@ -27,22 +27,22 @@ public class Condition implements Predicate<String> {
     public boolean test(String input) {
         String[] strings = input.split(",");
 
-        String data = strings[columnNumber-1].replaceAll("\"", "");
+        String data = strings[columnNumber - 1].replaceAll("\"", "");
         switch (operation) {
             case ">":
                 return Integer.parseInt(data) > Integer.parseInt(value);
             case "<":
                 return Integer.parseInt(data) < Integer.parseInt(value);
             case "<>":
-                if(parseIntOrNull(value) != null && parseIntOrNull(data) != null){
+                if (parseIntOrNull(value) != null && parseIntOrNull(data) != null) {
                     return Integer.parseInt(data) != parseIntOrNull(value);
-                }else{
+                } else {
                     return !data.equals(value);
                 }
             case "=":
-                if(parseIntOrNull(value) != null && parseIntOrNull(data) != null){
+                if (parseIntOrNull(value) != null && parseIntOrNull(data) != null) {
                     return Integer.parseInt(data) == parseIntOrNull(value);
-                }else{
+                } else {
                     return data.equals(value);
                 }
         }

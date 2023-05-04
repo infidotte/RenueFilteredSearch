@@ -1,4 +1,4 @@
-package org.example;
+package org.example.DoublyLinkedList;
 
 import java.util.function.Predicate;
 

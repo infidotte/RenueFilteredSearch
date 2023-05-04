@@ -1,4 +1,6 @@
-package org.example;
+package org.example.Utils;
+
+import org.example.Entity.AirportName;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -12,13 +14,13 @@ import java.util.TreeSet;
 
 public class CSVReader {
     private final String path;
-    private final SortedSet<AirportName> sortedSet =  new TreeSet<>((n1, n2) -> n1.getNumberInFile() - n2.getNumberInFile());
+    private final SortedSet<AirportName> sortedSet = new TreeSet<>((n1, n2) -> n1.getNumberInFile() - n2.getNumberInFile());
 
     public CSVReader(String path) {
         this.path = path;
     }
 
-    public SortedSet<AirportName> indexAndName(){
+    public SortedSet<AirportName> indexAndName() {
         try (FileInputStream inputStream = new FileInputStream(path);
              Scanner sc = new Scanner(inputStream)) {
             int index = 0;
@@ -32,6 +34,7 @@ public class CSVReader {
             throw new RuntimeException(e.toString());
         }
     }
+
     public ArrayList<String> findByName(String s) {
         ArrayList<Integer> integers = new ArrayList<>();
         for (AirportName air : sortedSet) {

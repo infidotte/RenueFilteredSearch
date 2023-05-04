@@ -1,9 +1,10 @@
-package org.example;
+package org.example.Entity;
 
 import lombok.Data;
 
 @Data
 public class AirportName {
+
     private int numberInFile;
     private String name;
 
