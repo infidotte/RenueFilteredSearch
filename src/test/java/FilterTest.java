@@ -3,9 +3,11 @@ import org.example.DoublyList;
 import org.example.Node;
 import org.junit.Test;
 
+import java.util.function.Predicate;
+
 public class FilterTest {
     private final String filterTest =
-            "(column[1]>10&column[5]='GKA'&column[2]>123)||(column[1]<10000&column[11]=0||(column[2]>100||column[7]<>100))";
+            "(column[1]>10&column[5]='GKA'||column[2]>123)||(column[1]<10000&column[11]=0||(column[2]>100||column[7]<>100))";
 
     @Test
     public void zxc() {
@@ -35,10 +37,12 @@ public class FilterTest {
         for (int j = 0; j < c.length; j++) {
             switch (c[j]) {
                 case '(':
+                    Predicate<String> predicate;
                     deep++;
                     canOperate = true;
                     break;
                 case ')':
+                    predicate = doublyList.listToPredicate();
                     deep--;
                     canOperate = false;
                     break;
@@ -55,9 +59,10 @@ public class FilterTest {
                     break;
                 case 'p':
                     Condition condition = readCondition(preparedConditions[currCond]);
-                    if (canOperate || prev != null) {
+                    Node node = new Node(condition, isAnd, deep);
+                    if (canOperate || node.getPrevious() != null) {
                         //add item to linked list.
-                        doublyList.addNode(condition, isAnd, deep);
+                        doublyList.addNode(node);
                     }
                     currCond++;
                     canOperate = true;
