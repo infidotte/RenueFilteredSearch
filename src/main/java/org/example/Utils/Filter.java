@@ -11,7 +11,7 @@ import java.util.Stack;
 import java.util.function.Predicate;
 
 public class Filter {
-    public Predicate<String> prepareFilter(String filterTest) {
+    public static Predicate<String> prepareFilter(String filterTest) {
         String[] conditions = filterTest.split("[&|\\||(|)]");
         List<String> preparedConditions = new ArrayList<>();
         for (String c : conditions) {
@@ -38,7 +38,6 @@ public class Filter {
                     bracket = new Bracket();
                     if (!isClose)
                         bracketStack.add(bracket);
-
                     break;
                 case ')':
                     Bracket tmpBracket = bracketStack.pop();
@@ -75,7 +74,7 @@ public class Filter {
         return mainBracket;
     }
 
-    private Condition readCondition(String condition) {
+    private static Condition readCondition(String condition) {
         int idxColR = condition.indexOf("]");
         String operation = readOperation(idxColR, condition);
         int columnIndex = Integer.parseInt(condition.substring(condition.indexOf("[") + 1, condition.indexOf("]")));
@@ -84,7 +83,7 @@ public class Filter {
         return new Condition(columnIndex, operation, value);
     }
 
-    private String readOperation(int idx, String str) {
+    private static String readOperation(int idx, String str) {
         char operation = str.charAt(idx + 1);
         switch (operation) {
             case '>':
@@ -97,6 +96,5 @@ public class Filter {
             default:
                 throw new RuntimeException("Undefined operation");
         }
-
     }
 }

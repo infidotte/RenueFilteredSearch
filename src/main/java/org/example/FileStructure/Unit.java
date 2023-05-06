@@ -23,7 +23,6 @@ public class Unit {
             Unit unit = new Unit(input.substring(1), indx);
             map.put(character, unit);
         }
-
     }
 
     public void put(String input, int indx) {
@@ -43,6 +42,10 @@ public class Unit {
     }
 
     public void firstFind(SortedSet<Integer> set, String searchString, int ind) {
+        if(searchString.length() == 1){
+            find(set);
+            return;
+        }
         Character ch = searchString.charAt(ind);
         Unit unit = map.get(ch);
         if(unit == null){
@@ -63,6 +66,5 @@ public class Unit {
         map.forEach((k,v) ->{
             v.find(set);
         });
-
     }
 }

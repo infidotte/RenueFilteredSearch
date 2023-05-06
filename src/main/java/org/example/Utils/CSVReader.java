@@ -14,11 +14,9 @@ import java.util.TreeSet;
 
 public class CSVReader {
     private final String path;
-    private final SortedSet<AirportName> sortedSet;
 
     public CSVReader(String pat) {
         this.path = pat;
-        this.sortedSet = indexAndName();
     }
 
     public SortedSet<AirportName> indexAndName() {
@@ -39,7 +37,6 @@ public class CSVReader {
         } else {
             throw new RuntimeException("Wrong path of airports.csv");
         }
-
     }
 
     public ArrayList<String> find(SortedSet<Integer> set) {
