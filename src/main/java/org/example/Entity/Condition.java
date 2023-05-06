@@ -14,8 +14,8 @@ public class Condition implements Predicate<String> {
     }
 
     @Override
-    public Predicate<String> and(Predicate<? super String> other) {
-        return Predicate.super.and(other);
+    public Predicate<String> negate() {
+        return Predicate.super.negate();
     }
 
     @Override

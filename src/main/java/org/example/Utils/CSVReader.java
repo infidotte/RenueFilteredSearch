@@ -14,39 +14,40 @@ import java.util.TreeSet;
 
 public class CSVReader {
     private final String path;
-    private final SortedSet<AirportName> sortedSet = new TreeSet<>((n1, n2) -> n1.getNumberInFile() - n2.getNumberInFile());
+    private final SortedSet<AirportName> sortedSet;
 
-    public CSVReader(String path) {
-        this.path = path;
+    public CSVReader(String pat) {
+        this.path = pat;
+        this.sortedSet = indexAndName();
     }
 
     public SortedSet<AirportName> indexAndName() {
-        try (FileInputStream inputStream = new FileInputStream(path);
-             Scanner sc = new Scanner(inputStream)) {
-            int index = 0;
-            while (sc.hasNextLine()) {
-                AirportName airportName = new AirportName(index, sc.nextLine().split(",")[1].replaceAll("\"", ""));
-                sortedSet.add(airportName);
-                index++;
+        SortedSet<AirportName> sortedSet = new TreeSet<>((n1, n2) -> n1.getNumberInFile() - n2.getNumberInFile());
+        if (path != null) {
+            try (FileInputStream inputStream = new FileInputStream(path);
+                 Scanner sc = new Scanner(inputStream)) {
+                int index = 0;
+                while (sc.hasNextLine()) {
+                    AirportName airportName = new AirportName(index, sc.nextLine().split(",")[1].replaceAll("\"", ""));
+                    sortedSet.add(airportName);
+                    index++;
+                }
+                return sortedSet;
+            } catch (IOException e) {
+                throw new RuntimeException(e.toString());
             }
-            return sortedSet;
-        } catch (IOException e) {
-            throw new RuntimeException(e.toString());
+        } else {
+            throw new RuntimeException("Wrong path of airports.csv");
         }
+
     }
 
-    public ArrayList<String> findByName(String s) {
-        ArrayList<Integer> integers = new ArrayList<>();
-        for (AirportName air : sortedSet) {
-            if (air.getName().startsWith(s)) {
-                integers.add(air.getNumberInFile());
-            }
-        }
+    public ArrayList<String> find(SortedSet<Integer> set) {
         ArrayList<String> list = new ArrayList<>();
         int prev = 0;
         try {
             BufferedReader lines = Files.newBufferedReader(Path.of(path));
-            for (Integer index : integers) {
+            for (Integer index : set) {
                 String line = "";
                 for (; prev <= index; prev++) {
                     line = lines.readLine();

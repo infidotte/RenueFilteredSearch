@@ -3,21 +3,21 @@ package org.example.DoublyLinkedList;
 import lombok.Data;
 import org.example.Entity.Condition;
 
+import java.util.function.Predicate;
+
 @Data
 public class Node {
 
     //wrap to predicate
-    private Condition item;
+    private Predicate<String> item;
     ///
 
     private boolean isAnd;
-    private int rDepp;
     private Node next;
     private Node previous;
 
-    public Node(Condition item, boolean isAnd, int rDeep) {
+    public Node(Predicate<String> item, boolean isAnd) {
         this.item = item;
         this.isAnd = isAnd;
-        this.rDepp = rDeep;
     }
 }

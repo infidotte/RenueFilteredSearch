@@ -2,68 +2,77 @@ package org.example.Utils;
 
 import org.example.DoublyLinkedList.DoublyList;
 import org.example.DoublyLinkedList.Node;
+import org.example.Entity.Bracket;
 import org.example.Entity.Condition;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
 import java.util.function.Predicate;
 
 public class Filter {
-    public void filter(String filter) {
-        String[] conditions = filter.split("[&|\\||(|)]");
-        String[] preparedConditions = new String[20];
-        int counter = 0;
+    public Predicate<String> prepareFilter(String filterTest) {
+        String[] conditions = filterTest.split("[&|\\||(|)]");
+        List<String> preparedConditions = new ArrayList<>();
         for (String c : conditions) {
             if (c.contains("column[")) {
-                preparedConditions[counter++] = c;
+                preparedConditions.add(c);
             }
         }
-        String ex = filter;
+        String ex = filterTest;
         for (String c : preparedConditions) {
             if (c != null) {
                 ex = ex.replace(c, "p");
             }
         }
         char[] c = ex.toCharArray();
-        DoublyList doublyList = new DoublyList();
-        int deep = 0;
         boolean isAnd = false;
         int currCond = 0;
-        boolean canOperate = false;
+        Bracket mainBracket = new Bracket();
+        Bracket bracket = new Bracket();
+        boolean isClose = false;
+        Stack<Bracket> bracketStack = new Stack<>();
         for (int j = 0; j < c.length; j++) {
             switch (c[j]) {
                 case '(':
-                    Predicate<String> predicate;
-                    deep++;
-                    canOperate = true;
+                    bracket = new Bracket();
+                    if (!isClose)
+                        bracketStack.add(bracket);
+
                     break;
                 case ')':
-                    predicate = doublyList.listToPredicate();
-                    deep--;
-                    canOperate = false;
+                    Bracket tmpBracket = bracketStack.pop();
+                    Node tmpNode = new Node(tmpBracket, isAnd);
+                    if (bracketStack.size() == 0) {
+                        mainBracket.addElement(tmpNode);
+                    } else {
+                        bracketStack.peek().addElement(tmpNode);
+
+                    }
+                    isClose = true;
+                    bracket = new Bracket();
                     break;
                 case '&':
                     isAnd = true;
-                    canOperate = true;
+                    isClose = false;
                     break;
                 case '|':
                     isAnd = false;
+                    isClose = false;
                     if (c[j + 1] != '|')
                         throw new RuntimeException("Unrecognized operation in filter");
                     j++;
-                    canOperate = true;
                     break;
                 case 'p':
-                    Condition condition = readCondition(preparedConditions[currCond]);
-                    Node node = new Node(condition, isAnd, deep);
-                    if (canOperate || node.getPrevious() != null) {
-                        //add item to linked list.
-                        doublyList.addNode(node);
-                    }
+                    Condition condition = readCondition(preparedConditions.get(currCond));
                     currCond++;
-                    canOperate = true;
+                    Node node = new Node(condition, isAnd);
+                    bracket.addElement(node);
                     break;
             }
         }
-        doublyList.printNodes();
+        mainBracket.resolveConditions();
+        return mainBracket;
     }
 
     private Condition readCondition(String condition) {
